@@ -1,0 +1,118 @@
+.Dd August 17, 2025
+.Dt CDI 1
+.Os
+.Sh NAME
+.Nm cdi
+.Nd run diffusion models on CPU
+.Sh SYNOPSIS
+.Nm
+.Ar command
+.Op options
+.Sh DESCRIPTION
+.Nm
+provides a command line interface for creating, training,
+fine-tuning, and running diffusion language models on CPU.
+.Pp
+It is designed for users without access to a dedicated GPU.
+Models can be defined, trained, and executed entirely on CPU.
+.Sh COMMANDS
+.Bl -tag -width Ds
+.It Cm init
+Create a new diffusion model.
+.Pp
+Usage:
+.Dl cdi init --model Ar name Op options
+.Bl -tag -width Ds
+.It Fl -model Ar name
+Name for the model instance (required).
+.It Fl p Ar parameters
+Target number of parameters.
+CDI estimates hyperparameters to approximate this size.
+Supports suffixes:
+K = thousand (3K = 3000),
+M = million (50M = 50000000),
+B = billion (7B = 7000000000),
+T = trillion (2T = 2000000000000) (not recommended).
+.It Fl -layers Ar n
+Number of layers (mutually exclusive with Fl p ).
+.It Fl -dim Ar n
+Hidden dimension size (mutually exclusive with Fl p ).
+.It Fl -heads Ar n
+Number of attention heads (mutually exclusive with Fl p ).
+.El
+.It Cm train
+Train a diffusion model on a dataset.
+.Pp
+Usage:
+.Dl cdi train --model Ar name --data Ar path Op options
+.Bl -tag -width Ds
+.It Fl -model Ar name
+Model name to train (required).
+.It Fl -data Ar path
+Path to training dataset (required).
+.It Fl -batch Ar n
+Batch size (default: 32).
+.It Fl -lr Ar n
+Learning rate (default: 0.001).
+.It Fl -epochs Ar n
+Number of training epochs (default: 10).
+.El
+.It Cm finetune
+Fine-tune an existing model on conversational or task-specific data.
+.Pp
+Usage:
+.Dl cdi finetune --model Ar name --data Ar path Op options
+.Bl -tag -width Ds
+.It Fl -model Ar name
+Model to fine-tune (required).
+.It Fl -data Ar path
+Path to fine-tuning dataset (required).
+.It Fl -batch Ar n
+Batch size (default: 16).
+.It Fl -lr Ar n
+Learning rate (default: 0.0001).
+.El
+.It Cm run
+Run inference with a trained or fine-tuned model.
+.Pp
+Usage:
+.Dl cdi run --model Ar name Op options
+.Bl -tag -width Ds
+.It Fl -model Ar name
+Model name to run (required).
+.It Fl -complete
+Use autocompletion mode instead of chat.
+.It Fl -prompt Aq Dq text
+Provide an initial prompt.
+.It Fl -no-stream
+Disable streaming output (default: enabled).
+.It Fl -stop Ar token
+Stop generation when token or string is encountered
+(default: <|EOT|>).
+.El
+.El
+.Sh EXAMPLES
+Initialize a model with 50M parameters:
+.Dl cdi init --model myModel -p 50M
+.Pp
+Train a model with a dataset:
+.Dl cdi train --model myModel --data train.txt --batch 64 --lr 0.0005 --epochs 5
+.Pp
+Fine-tune for chat:
+.Dl cdi finetune --model myModel --data chat_data.json
+.Pp
+Run a chat session:
+.Dl cdi run --model myModel --prompt "Hello!"
+.Pp
+Run in completion mode with a stopping token:
+.Dl cdi run --model myModel --complete --prompt "The quick brown fox" --stop "."
+.Sh FILES
+.Pa CDiffuse.h
+for programmatic usage.
+.Pp
+.Pa CLI.cpp
+for command line interface.
+.Sh SEE ALSO
+.Xr chatFormat 5
+.Sh AUTHORS
+Written by CDiffuse contributors.
