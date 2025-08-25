@@ -1,1 +1,4 @@
 .DS_Store
+.vscode
+# Sorry for including this in the last commit 😬
+tools/data.csv
